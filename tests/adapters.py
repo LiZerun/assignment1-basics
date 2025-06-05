@@ -9,6 +9,7 @@ import numpy.typing as npt
 import torch
 from torch import Tensor
 
+from cs336_basics.kernels import *
 
 
 def run_linear(
@@ -30,7 +31,11 @@ def run_linear(
         Float[Tensor, "... d_out"]: The transformed output of your linear module.
     """
 
-    raise NotImplementedError
+    return Linear(
+        d_in=d_in,
+        d_out=d_out,
+        weights=weights,
+    )(in_features)
 
 
 def run_embedding(
@@ -52,7 +57,11 @@ def run_embedding(
         Float[Tensor, "... d_model"]: Batch of embeddings returned by your Embedding layer.
     """
 
-    raise NotImplementedError
+    return Embedding(
+        vocab_size=vocab_size,
+        d_model=d_model,
+        weights=weights,
+    )(token_ids)
 
 
 def run_swiglu(
@@ -84,7 +93,14 @@ def run_swiglu(
     # swiglu.w1.weight.data = w1_weight
     # swiglu.w2.weight.data = w2_weight
     # swiglu.w3.weight.data = w3_weight
-    raise NotImplementedError
+    
+    return SwigLU(
+        d_model=d_model,
+        d_ff=d_ff,
+        w1_weight=w1_weight,
+        w2_weight=w2_weight,
+        w3_weight=w3_weight,
+    )(in_features)
 
 
 def run_scaled_dot_product_attention(
@@ -105,7 +121,12 @@ def run_scaled_dot_product_attention(
     Returns:
         Float[Tensor, " ... queries d_v"]: Output of SDPA
     """
-    raise NotImplementedError
+    return ScaledDotProductAttention(
+        Q=Q,
+        K=K,
+        V=V,
+        mask=mask,
+    )
 
 
 def run_multihead_self_attention(
@@ -139,8 +160,14 @@ def run_multihead_self_attention(
         Float[Tensor, " ... sequence_length d_out"]: Tensor with the output of running your optimized, batched multi-headed attention
         implementation with the given QKV projection weights and input features.
     """
-    raise NotImplementedError
-
+    return MultiHeadSelfAttention(
+        d_model=d_model,
+        num_heads=num_heads,
+        q_proj_weight=q_proj_weight,
+        k_proj_weight=k_proj_weight,
+        v_proj_weight=v_proj_weight,
+        o_proj_weight=o_proj_weight,
+    )(in_features=in_features)
 
 def run_multihead_self_attention_with_rope(
     d_model: int,
